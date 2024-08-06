@@ -1,5 +1,5 @@
 class ChatMessagesController < ApplicationController
-  before_action :set_chat_message, only: %i[ show edit update destroy ]
+  before_action :set_chat_message, only: %i[show edit update destroy]
 
   # GET /chat_messages or /chat_messages.json
   def index
@@ -7,8 +7,7 @@ class ChatMessagesController < ApplicationController
   end
 
   # GET /chat_messages/1 or /chat_messages/1.json
-  def show
-  end
+  def show; end
 
   # GET /chat_messages/new
   def new
@@ -16,8 +15,7 @@ class ChatMessagesController < ApplicationController
   end
 
   # GET /chat_messages/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /chat_messages or /chat_messages.json
   def create
@@ -25,7 +23,8 @@ class ChatMessagesController < ApplicationController
 
     respond_to do |format|
       if @chat_message.save
-        format.html { redirect_to chat_message_url(@chat_message), notice: "Chat message was successfully created." }
+        AiResponseJob.perform_later(@chat_message.id)
+        format.html { redirect_to root_path, notice: 'Chat message was successfully created.' }
         format.json { render :show, status: :created, location: @chat_message }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +37,7 @@ class ChatMessagesController < ApplicationController
   def update
     respond_to do |format|
       if @chat_message.update(chat_message_params)
-        format.html { redirect_to chat_message_url(@chat_message), notice: "Chat message was successfully updated." }
+        format.html { redirect_to chat_message_url(@chat_message), notice: 'Chat message was successfully updated.' }
         format.json { render :show, status: :ok, location: @chat_message }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -52,19 +51,20 @@ class ChatMessagesController < ApplicationController
     @chat_message.destroy!
 
     respond_to do |format|
-      format.html { redirect_to chat_messages_url, notice: "Chat message was successfully destroyed." }
+      format.html { redirect_to chat_messages_url, notice: 'Chat message was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_chat_message
-      @chat_message = ChatMessage.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def chat_message_params
-      params.require(:chat_message).permit(:body)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_chat_message
+    @chat_message = ChatMessage.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def chat_message_params
+    params.require(:chat_message).permit(:body)
+  end
 end

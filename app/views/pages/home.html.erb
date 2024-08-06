@@ -1,3 +1,4 @@
+<%= turbo_stream_from :ai_messages %>
 <div>
   <h1 class="font-bold text-4xl">My custom AI model</h1>
   <p>Find me in app/views/pages/home.html.erb</p>
@@ -6,4 +7,5 @@
   <%= link_to "Talk To Ai", new_chat_message_path, class: "bg-green-500 p-2 rounded-full text-md text-white", data: {turbo_frame: :chat_messages} %>
 
   <%= turbo_frame_tag :chat_messages %>
+  <div id="ai-messages"></div>
 </div>
